@@ -16,17 +16,18 @@ using namespace sf;
 class GameEngine{
 public:
 	
-	KeyboardIn keyboardIn;
-	KeyboardOut keyboardOut;
+	shared_ptr<KeyboardIn> keyboardIn = shared_ptr<KeyboardIn>(new KeyboardIn());
+	shared_ptr<KeyboardOut> keyboardOut = shared_ptr<KeyboardOut>(new KeyboardOut());
 	bool showFPS = false;
 	bool pause = false;
 
-	Render* render = new Render();
-	Controls* controls =  new Controls();
-	ObjectList* objects = new ObjectList();
+	shared_ptr<Render> render = shared_ptr<Render>(new Render());
+	shared_ptr<Controls> controls = shared_ptr<Controls>(new Controls());
+	shared_ptr<ObjectList> objects = shared_ptr<ObjectList>(new ObjectList());
+	RenderWindow window;
 
 	void start() {
-		RenderWindow window;
+		
 		int width = 1920, height = 1080;
 
 		bool menuBool=false;
@@ -36,16 +37,7 @@ public:
 		window.setVerticalSyncEnabled(true);
 		window.setActive(true);
 
-		Music titleMusic;
-		if (!titleMusic.openFromFile("Music\\MenuTheme.wav")) {
-			cout << "Nopey" << endl;
-		}
-
-		titleMusic.play();
-		titleMusic.setVolume(2.5f);
-
 		float hScale = (float)width / 1920, vScale = (float)height / 1080;
-
 
 		Font arial;
 		arial.loadFromFile("Fonts\\arial.ttf");
@@ -79,9 +71,9 @@ public:
 
 
 			Event event;
-			keyboardOut.updateLastKey(keyboardIn.keyList);
-			keyboardOut.updateLastButton(keyboardIn.buttonList);
-			keyboardIn.mouseWheel = 0;
+			keyboardOut->updateLastKey(keyboardIn->keyList);
+			keyboardOut->updateLastButton(keyboardIn->buttonList);
+			keyboardIn->mouseWheel = 0;
 			while (window.pollEvent(event)) {
 				switch (event.type) {
 				case Event::Closed:
@@ -93,11 +85,11 @@ public:
 				case Event::MouseButtonPressed:
 				case Event::MouseButtonReleased:
 				case Event::MouseWheelScrolled:
-					keyboardIn.checkInput(event);
+					keyboardIn->checkInput(event);
 					break;
 				case Event::MouseMoved:
-					keyboardIn.setMouse(new int(event.mouseMove.x), new int(event.mouseMove.y));
-					//std::cout << "Mouse X: " << keyboardIn.mouseXPos << " Mouse Y: " << keyboardIn.mouseYPos << std::endl;
+					keyboardIn->setMouse(event.mouseMove.x,event.mouseMove.y);
+					//std::cout << "Mouse X: " << *keyboardIn.mouseXPos << " Mouse Y: " << *keyboardIn.mouseYPos << std::endl;
 					break;
 				case sf::Event::Resized:
 					glViewport(0, 0, event.size.width, event.size.height);
@@ -109,7 +101,7 @@ public:
 
 			//Doing Controls
 			for (int i = 0; i < controls->controlsSize; i++) {
-				Control *temp = controls->getIndex(i)->control;
+				shared_ptr<Control> temp = controls->getIndex(i)->control;
 				if (temp->trigger(keyboardIn, keyboardOut)) temp->event(this);
 			}
 			//rendering 

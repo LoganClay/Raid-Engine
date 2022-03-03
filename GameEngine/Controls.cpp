@@ -15,30 +15,31 @@ class Template : public Control {
 using namespace sf;
 using namespace std;
 
-class Right : public Control {
-public:
-	bool right = false;
+class CloseTrigger : public Control {
 
-	bool trigger(KeyboardIn mouse, KeyboardOut keys) {
-		return keys.checkPressed(mouse.getKeyListAt(Keyboard::D), Keyboard::D);
-	}
-	void event(GameEngine* g) {
-		GameObject* object = g->objects->getIndex(1)->object;
-		*object->xPos = *object->xPos + 10;
-		cout << *object->xPos << endl;
-		object->node->animation->setAnimation(0);
-	}
-};
-class Left : public Control {
 public:
-	bool left = false;
-	bool trigger(KeyboardIn mouse, KeyboardOut keys) {
-		return keys.checkPressed(mouse.getKeyListAt(Keyboard::A), Keyboard::A);
+
+	shared_ptr<CloseButton> button;
+
+
+	CloseTrigger(shared_ptr<CloseButton> o) {
+		button = o;
 	}
+
+	bool trigger(shared_ptr<KeyboardIn> mouse, shared_ptr<KeyboardOut> keys) {
+		if (mouse->mouse->detect(button->hitbox)) {
+			button->SetAnimation(1);
+			if (keys->checkBRelease(mouse->getButtonListAt(Mouse::Left), Mouse::Left)) {
+				cout << "closing" << endl;
+				return true;
+			}
+			return false;
+		}
+		button->SetAnimation(0);
+		return false;
+	}
+
 	void event(GameEngine* g) {
-		GameObject* object = g->objects->getIndex(1)->object;
-		object->node->animation->setAnimation(1);
-		unique_ptr<int> temp(new int(*object->xPos - 10));
-		*object->xPos = *object->xPos - 10;
+		g->window.close();
 	}
 };

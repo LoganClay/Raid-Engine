@@ -11,11 +11,11 @@ public:
 
 	Hitbox(shared_ptr<int> x, shared_ptr<int> y, shared_ptr<int> h, shared_ptr<int> w);
 
-	bool detect( Hitbox box );
+	bool detect( Hitbox* box );
 	
-	void setX(int* x);
-	void setY(int* y);
-	void setW(int* h);
-	void setH(int* w);
+	void setX(shared_ptr<int> x);
+	void setY(shared_ptr<int> y);
+	void setW(shared_ptr<int> h);
+	void setH(shared_ptr<int> w);
 };
 

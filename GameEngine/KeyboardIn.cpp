@@ -16,18 +16,16 @@ void KeyboardIn::checkInput(sf::Event e)
 
 bool KeyboardIn::getKeyListAt(int i) { return this->keyList[i]; }
 bool KeyboardIn::getButtonListAt(int i) { return this->buttonList[i]; }
-void KeyboardIn::setMouse(int* x, int* y) {
-	unique_ptr<int> tempX(x);
-	unique_ptr<int> tempY(y);
-	mouseXPos = move(tempX);
-	mouseYPos = move(tempY);
+void KeyboardIn::setMouse(int x, int y) {
+	*mouseXPos = x;
+	*mouseYPos = y;
 }
 
 KeyboardIn::KeyboardIn() {
 	for (int i = 0; i < sizeof(this->keyList); i++) this->keyList[i] = false;
 	for (int i = 0; i < sizeof(this->buttonList); i++) this->buttonList[i] = false;
 	mouseWheel = 0;
-	mouseXPos = make_shared<int>(0);
-	mouseYPos = make_shared<int>(0);
-	mouse = new Hitbox(mouseXPos,mouseYPos, make_shared<int>(1), make_shared<int>(1));
+	mouseXPos = shared_ptr<int>(new int (0));
+	mouseYPos = shared_ptr<int>(new int (0));
+	mouse = new Hitbox(mouseXPos,mouseYPos, shared_ptr<int>(new int (1)), shared_ptr<int>(new int (1)));
 }

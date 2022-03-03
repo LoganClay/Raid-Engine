@@ -34,7 +34,7 @@ void Render::Animation::iterate(Render::Node* node) {
 	//cout << w*x << ", " << h*y << ", frame: " << currentFrame << endl;
 	node->sprite.setTextureRect(IntRect( w * x, h * y, w, h));
 
-	cout << *node->x << ", " << *node->y << endl;
+	//cout << *node->x << ", " << *node->y << endl;
 	node->sprite.setPosition(*node->x, *node->y);
 }
 

@@ -16,5 +16,5 @@ public:
 	KeyboardIn();
 	bool getKeyListAt(int i);
 	bool getButtonListAt(int i);
-	void setMouse(int* x, int* y);
+	void setMouse(int x, int y);
 };

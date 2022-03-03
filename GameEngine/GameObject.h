@@ -53,18 +53,18 @@ class ObjectList {
 public:
 	class Node{
 	public:
-		GameObject* object;
-		Node* next;
-		Node(GameObject* object) {
-			this -> object = object;
-			this -> next = NULL;
+		shared_ptr<GameObject> object;
+		shared_ptr<Node> next;
+		Node(shared_ptr<GameObject> object) {
+			this->object = object;
+			this->next = NULL;
 		}
-		void setNext(Node* node) { this -> next = node; }
+		void setNext(shared_ptr<Node> node) { this->next = node; }
 	};
 	int listSize;
 
-	Node* first;
-	Node* last;
+	shared_ptr<Node> first;
+	shared_ptr<Node> last;
 
 	ObjectList() {
 		listSize = 0;
@@ -72,15 +72,15 @@ public:
 		last = NULL;
 	}
 
-	Node* addObject(GameObject* object) {
+	shared_ptr<Node> addObject(shared_ptr<GameObject> object) {
 		if (listSize == 0) {
-			first = new Node(object);
+			first = shared_ptr<Node>(new Node(object));
 			last = first;
 			listSize++;
 			return first;
 		}
 		else {
-			Node* new_node = new Node(object);
+			shared_ptr<Node> new_node = shared_ptr<Node>(new Node(object));
 			last->setNext(new_node);
 			last = new_node;
 			listSize++;
@@ -88,30 +88,30 @@ public:
 		}
 	}
 
-	void removeObject(Node* node , Render* render) {
+	void removeObject(shared_ptr<Node> node, shared_ptr<Render> render) {
 		if (listSize == 0) return;
-		Node* temp = first;
-		Node* temp2 = last;
-		Node* temp3;
+		shared_ptr<Node> temp = first;
+		shared_ptr<Node> temp2 = last;
+		shared_ptr<Node> temp3;
 		for (int i = 0; i < listSize; i++) {
 			if (temp == node && i == 0) {
 				temp2 = temp->next;
 				render->removeFromRender(node->object->node);
-				delete temp;
+				temp.reset();
 				first = temp2;
 				break;
 			}
 			else if (temp == node && node == last) {
 				last = temp2;
 				render->removeFromRender(node->object->node);
-				delete temp;
+				temp.reset();
 				break;
 			}
 			else if (temp == node) {
 				temp3 = temp->next;
 				temp2->setNext(temp3);
 				render->removeFromRender(node->object->node);
-				delete temp;
+				temp.reset();
 				break;
 			}
 			temp2 = temp;
@@ -119,16 +119,16 @@ public:
 		}
 		listSize--;
 	}
-	void truncateObjects(Node* node) {
-		Node* temp = first;
-		Node* temp2 = last;
+	void truncateObjects(shared_ptr<Node> node) {
+		shared_ptr<Node> temp = first;
+		shared_ptr<Node> temp2 = last;
 		int sizeTemp = listSize;
 		bool trunc = false;
 		for (int i = 0; i < sizeTemp; i++) {
 			if (trunc) {
 				temp2 = temp->next;
 				temp->object->render->removeFromRender(temp->object->node);
-				delete temp;
+				temp.reset();
 				temp = temp2;
 				listSize--;
 			}
@@ -143,24 +143,24 @@ public:
 			}
 			cout << listSize << endl;
 		}
-		
+
 	}
 	void clearObjects() {
-		Node* temp = first;
-		Node* temp2 = last;
+		shared_ptr<Node> temp = first;
+		shared_ptr<Node> temp2 = last;
 		for (int i = 0; i < listSize; i++) {
 			temp2 = temp->next;
 			temp->object->render->removeFromRender(temp->object->node);
-			delete temp;
+			temp.reset();
 			temp = temp2;
 		}
 		first = NULL;
 		last = NULL;
 		listSize = 0;
 	}
-	Node* getIndex(int i) {
+	shared_ptr<Node> getIndex(int i) {
 		if (i > listSize || i < 0)return first;
-		Node* node = first;
+		shared_ptr<Node> node = first;
 		for (int x = 0; x < i; x++) {
 			node = node->next;
 		}
